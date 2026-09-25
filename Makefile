@@ -63,11 +63,7 @@ test:
 vet:
 	$(GO) vet ./...
 
-# Faz 0 de-risk: kancalar bu makinede gercekten takiliyor mu?
-.PHONY: phase0
-phase0: $(BIN)
-	./scripts/phase0-check.sh
-
+# Sensor kendi kendini dogrular: uc sinif da uretiliyor mu? Kubernetes gerekmez.
 .PHONY: smoke
 smoke: $(BIN)
 	sudo ./scripts/smoke.sh

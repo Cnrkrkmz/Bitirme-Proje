@@ -36,7 +36,7 @@ Ucuncusu ayrimi yapan sinyal:
 ```bash
 make deps        # clang, libbpf, bpftool, Go  (Ubuntu/Debian)
 make build       # go mod tidy -> vmlinux.h -> .o -> bin/flowmon
-sudo make phase0 # Faz 0 de-risk: kancalar bu makinede takiliyor mu?
+sudo make smoke  # sensor kendini dogrular: uc sinif da uretiliyor mu?
 ```
 
 `go.sum` depoda tutulmuyor; ilk `make build` `go mod tidy` ile uretiyor.
@@ -53,8 +53,8 @@ sudo ./bin/flowmon -dport 18080,19090 -observed observed.json
 Stdout'a JSONL olay akisi gider:
 
 ```json
-{"time":"...","class":"dropped","src":"10.42.0.14","dst":"10.42.0.21",
- "dport":7070,"retrans":6,"duration_ms":13421.5,"comm":"checkoutservi",
+{"time":"...","class":"dropped","src":"10.244.219.113","dst":"10.244.219.118",
+ "dport":19090,"retrans":2,"duration_ms":3000.15,"comm":"wget",
  "pod_uid":"3f2b...","container_id":"9c1a..."}
 ```
 
