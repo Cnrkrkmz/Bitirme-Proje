@@ -1,0 +1,29 @@
+# SENARYO 1 -- etiket hatasi (pod secici)
+#
+#   app: api  ->  app: api-v2
+#
+# Biri refactor sirasinda etiketi yeniden adlandirdi, politikayi guncelledi
+# ama pod'u guncellemedi (ya da tersi).
+#
+#   KESILIR :  api -> store:19090
+#   AYAKTA  :  frontend -> api:18080,  frontend -> api:18081
+#
+# Bu EKLEME degil UZERINE YAZMA: baseline'daki allow-store-data ile ayni adi
+# tasiyor. NetworkPolicy'ler birlesimle (union) calistigi icin ustune bos bir
+# deny eklemek mevcut izni KALDIRMAZ -- gercek regresyonlar da zaten var olan
+# kuralin yanlis duzenlenmesiyle olur.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-store-data
+  namespace: agentic-sre
+spec:
+  podSelector:
+    matchLabels: { app: store }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: api-v2 }   # <-- boyle bir pod yok
+      ports:
+        - { protocol: TCP, port: 19090 }

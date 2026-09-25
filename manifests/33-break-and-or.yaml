@@ -1,0 +1,36 @@
+# SENARYO 3 -- namespaceSelector/podSelector VE-VEYA karisikligi
+#
+# NetworkPolicy'nin en bilinen tuzagi. AYNI liste ogesinde iki secici VE ile
+# birlesir; AYRI ogeler VEYA ile birlesir:
+#
+#   from:                      from:
+#     - namespaceSelector: A     - namespaceSelector: A
+#       podSelector: B           - podSelector: B
+#   -> A VE B                  -> A VEYA B
+#
+# Burada niyet "frontend pod'lari VEYA monitoring namespace'i" idi, ama tek
+# oge olarak yazildigi icin "monitoring namespace'indeki frontend pod'lari"
+# oldu. Boyle bir pod yok -> akis sessizce duser.
+#
+# Bu senaryo kasitli: goz bunu yakalayamaz, statik analiz yakalar. Dogrulama
+# kapisinin neden LLM'e degil analizore dayandiginin ornegi.
+#
+#   KESILIR :  frontend -> api:18080
+#   AYAKTA  :  frontend -> api:18081,  api -> store:19090
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-app
+  namespace: agentic-sre
+spec:
+  podSelector:
+    matchLabels: { app: api }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels: { name: monitoring }
+          podSelector:
+            matchLabels: { app: frontend }   # <-- ayni ogede: VE
+      ports:
+        - { protocol: TCP, port: 18080 }

@@ -1,0 +1,66 @@
+# Bilinen-iyi politika kumesi. "Varsayilan kapali + acik izinler" deseni.
+#
+# Yalnizca Ingress kisitlaniyor; egress'e dokunmuyoruz ki DNS (UDP/53) her
+# zaman calissin -- olculen sey yalnizca hedefe girisin izinli olup olmadigi
+# olsun, DNS coz(eme)mek degil.
+#
+# Her akis icin AYRI politika. Sebep: her ariza senaryosunun tam olarak bir
+# izni bozabilmesi. Uc izin tek politikada olsaydi bozmak ucunu birden keser
+# ve kontrol akisi kalmazdi.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: agentic-sre
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+  ingress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-app
+  namespace: agentic-sre
+spec:
+  podSelector:
+    matchLabels: { app: api }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: frontend }
+      ports:
+        - { protocol: TCP, port: 18080 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-admin
+  namespace: agentic-sre
+spec:
+  podSelector:
+    matchLabels: { app: api }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: frontend }
+      ports:
+        - { protocol: TCP, port: 18081 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-store-data
+  namespace: agentic-sre
+spec:
+  podSelector:
+    matchLabels: { app: store }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: api }
+      ports:
+        - { protocol: TCP, port: 19090 }

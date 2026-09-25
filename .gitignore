@@ -1,0 +1,14 @@
+bin/
+internal/probe/bpf/*.o
+
+# vmlinux.h calisan cekirdegin BTF'inden uretiliyor ve makineye ozgu.
+# Ekip icinde paylasilmasi gereken bir sey degil; `make` uretiyor.
+bpf/vmlinux.h
+
+# lab yakalamalari makineye ve ana ozgu; depoda tutulmuyor.
+out/
+observed.json
+
+# Proje ozeti yayinlanmamis bir calisma; depo halka acik olursa disari cikmasin.
+# Paylasmak isterseniz bu satiri silin.
+Proje-Ozeti-v5.pdf

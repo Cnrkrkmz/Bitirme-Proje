@@ -1,0 +1,25 @@
+# SENARYO 2 -- port hatasi
+#
+#   port: 18081  ->  port: 18082
+#
+# Admin portu degistirildi saniliyor ya da elle yazilirken bir hane kaydi.
+# Secici dogru, hedef pod dogru, YALNIZCA port yanlis. Etiket hatasindan
+# farkli bir kok neden; ureticinin ikisini ayirt edebilmesi gerekiyor.
+#
+#   KESILIR :  frontend -> api:18081
+#   AYAKTA  :  frontend -> api:18080,  api -> store:19090
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-admin
+  namespace: agentic-sre
+spec:
+  podSelector:
+    matchLabels: { app: api }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: frontend }
+      ports:
+        - { protocol: TCP, port: 18082 }   # <-- kimse bu portu dinlemiyor

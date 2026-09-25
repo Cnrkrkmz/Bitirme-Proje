@@ -1,0 +1,12 @@
+# Projenin gozlem altindaki is yuku namespace'i.
+#
+# Operator (Faz 2) geldiginde kendi namespace'ine kurulacak; burasi onun
+# YONETTIGI ortam, calistigi ortam degil. Ayrim kasitli: ajanin kendi
+# bilesenlerini gozlemledigi is yukuyle ayni yere koymak, olcumun icine
+# ajanin kendi trafigini karistirir.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agentic-sre
+  labels:
+    app.kubernetes.io/part-of: agentic-sre
